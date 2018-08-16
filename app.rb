@@ -43,6 +43,7 @@ end
 
 def sea(sot)
   msg = []
+  msg << '場所は'
   case sot.day
   when 1..10
     msg << '　<b>The Shores of Plenty 海域のSmuggler\'s Bay の西(マップの左上)です</b>'
@@ -82,16 +83,38 @@ def view
   msg << '今の時間、幽霊船は'
   msg << sea(sot)
   msg << '次の幽霊船は'
-  next_time = if (sot.day % 10).zero?
-                24 - sot.hour
+  required_time = if (sot.day % 10).zero?
+                (24 - sot.hour)
               else
                 (10 - sot.day % 10) * 24 + (24 - sot.hour)
               end
-  msg << "　約#{next_time} 分(#{'%2.1f' % (next_time / 60.0)} 時間)後に"
-  msg << "　日本時間(JST): #{(now + next_time.minutes).in_time_zone('Asia/Tokyo')} 頃に"
-  msg << sea(sot_time(now + next_time.minutes))
+  msg << "　約 #{required_time} 分(#{'%2.1f' % (required_time / 60.0)} 時間)後"
+  next_time = now + (required_time - 1).minutes + (60 - sot.min).seconds
+  msg << "　日本時間(JST): #{(next_time).in_time_zone('Asia/Tokyo')}"
+  msg << "　ロンドン(BST): #{next_time.in_time_zone('London')}"
+  msg << "　アメリカ太平洋(PDT/PST): #{next_time.in_time_zone('America/Los_Angeles')}"
+  msg << "　アメリカ東部(EDT/EST): #{next_time.in_time_zone('America/New_York')}"
+  msg << sea(sot_time(next_time))
 
   msg.join('<BR>')
+end
+
+def release_note
+  [
+    '',
+    '<a href="https://www.seaofthieves.com/release-notes">Release Notes</a>',
+    '<a href="https://translate.google.com/translate?hl=ja&sl=auto&tl=ja&u=https%3A%2F%2Fwww.seaofthieves.com%2Frelease-notes">Release Notes(Google 翻訳)</a>',
+    '',
+  ].join('<br>')
+end
+
+def twitter
+  [
+    '',
+    '<a href="https://twitter.com/seaofthieves">@seaofthieves</a>',
+    '<a href="https://twitter.com/SeaOfThievesHQ">@SeaOfThievesHQ</a>',
+    '',
+  ].join('<br>')
 end
 
 get '/' do
@@ -99,6 +122,8 @@ get '/' do
     '<html>',
     '<head><meta http-equiv="refresh" content="15"></head><body>',
     view,
+    release_note,
+    twitter,
     '</body></html>'
   ].join("\n")
 end
@@ -108,6 +133,8 @@ get '' do
     '<html>',
     '<head><meta http-equiv="refresh" content="15"></head><body>',
     view,
+    release_note,
+    twitter,
     '</body></html>'
   ].join("\n")
 end
