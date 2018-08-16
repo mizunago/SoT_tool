@@ -24,7 +24,7 @@ class SotTime
   end
 
   def day
-    correct = 17
+    correct = 27
     min_count = @time.min / 24.0
     min_count += 1
     days = @time.hour % 12 * 60 / 24.0
