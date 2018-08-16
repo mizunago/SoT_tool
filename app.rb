@@ -78,11 +78,17 @@ def view
   msg << 'ゲーム内時間：'
   sot = sot_time(now)
   msg << "　<b>#{v_sot(sot)}</b>"
+  msg << ''
   msg << '今の時間、幽霊船は'
   msg << sea(sot)
   msg << '次の幽霊船は'
-  next_time = (11 - (sot.day % 10 + 1)) * 24 + (24 - sot.hour)
-  msg << "　約#{next_time} 分(#{next_time / 60} 時間)後に"
+  next_time = if (sot.day % 10).zero?
+                24 - sot.hour
+              else
+                (10 - sot.day % 10) * 24 + (24 - sot.hour)
+              end
+  msg << "　約#{next_time} 分(#{'%2.1f' % (next_time / 60.0)} 時間)後に"
+  msg << "　日本時間(JST): #{(now + next_time.minutes).in_time_zone('Asia/Tokyo')} 頃に"
   msg << sea(sot_time(now + next_time.minutes))
 
   msg.join('<BR>')
