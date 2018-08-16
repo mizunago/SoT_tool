@@ -91,7 +91,7 @@ end
 get '/' do
   [
     '<html>',
-    '<head><meta http-equiv="refresh" content="10"></head><body>',
+    '<head><meta http-equiv="refresh" content="15"></head><body>',
     view,
     '</body></html>'
   ].join("\n")
@@ -100,7 +100,7 @@ end
 get '' do
   [
     '<html>',
-    '<head><meta http-equiv="refresh" content="5"></head><body>',
+    '<head><meta http-equiv="refresh" content="15"></head><body>',
     view,
     '</body></html>'
   ].join("\n")
