@@ -1,4 +1,4 @@
-#!/home/nagonago/.rbenv/versions/2.2.5/bin/ruby
+#!/home/ubuntu/.rbenv/versions/2.7.3/bin/ruby
 # #!/usr/bin/ruby
 # encoding: utf-8
 require 'bundler/setup'
@@ -8,7 +8,7 @@ require 'sinatra'
 
 class SotTime
   def initialize(time)
-    @time = time
+    @time = Time.at(time.to_i).utc
   end
 
   def sec
@@ -20,11 +20,11 @@ class SotTime
   end
 
   def hour
-    (@time.hour % 2).zero? ? (@time.min + 12) % 24 : @time.min % 24
+    (@time.hour % 2).zero? ? @time.min % 24 : (@time.min + 12) % 24
   end
 
   def day
-    correct = 27
+    correct = -1
     min_count = @time.min / 24.0
     min_count += 1
     days = @time.hour % 12 * 60 / 24.0
@@ -72,29 +72,35 @@ def view
   now = Time.now
   msg << '現在時刻:'
   msg << "　日本時間(JST): #{now.in_time_zone('Asia/Tokyo')}"
+  msg << "　協定世界時(UTC/GMT): #{now.in_time_zone('UTC')}"
   msg << "　ロンドン(BST): #{now.in_time_zone('London')}"
   msg << "　アメリカ太平洋(PDT/PST): #{now.in_time_zone('America/Los_Angeles')}"
   msg << "　アメリカ東部(EDT/EST): #{now.in_time_zone('America/New_York')}"
   msg << ''
   msg << 'ゲーム内時間：'
-  sot = sot_time(now)
-  msg << "　<b>#{v_sot(sot)}</b>"
+  msg << "　<b>#{v_sot(sot_time(now))}</b>"
+  #30.times do |i|
+  #msg << "　<b>#{v_sot(sot_time(now + i * 24.minutes))}</b>"
+  #end
+  #24.times do |i|
+  #msg << "　<b>#{v_sot(sot_time(now + i.minutes))}</b>"
+  #end
   msg << ''
-  msg << '今の時間、幽霊船は'
-  msg << sea(sot)
-  msg << '次の幽霊船は'
-  required_time = if (sot.day % 10).zero?
-                (24 - sot.hour)
-              else
-                (10 - sot.day % 10) * 24 + (24 - sot.hour)
-              end
-  msg << "　約 #{required_time} 分(#{'%2.1f' % (required_time / 60.0)} 時間)後"
-  next_time = now + (required_time - 1).minutes + (60 - sot.min).seconds
-  msg << "　日本時間(JST): #{(next_time).in_time_zone('Asia/Tokyo')}"
-  msg << "　ロンドン(BST): #{next_time.in_time_zone('London')}"
-  msg << "　アメリカ太平洋(PDT/PST): #{next_time.in_time_zone('America/Los_Angeles')}"
-  msg << "　アメリカ東部(EDT/EST): #{next_time.in_time_zone('America/New_York')}"
-  msg << sea(sot_time(next_time))
+  #msg << '今の時間、幽霊船は'
+  #msg << sea(sot)
+  #msg << '次の幽霊船は'
+  #required_time = if (sot.day % 10).zero?
+  #              (24 - sot.hour)
+  #            else
+  #              (10 - sot.day % 10) * 24 + (24 - sot.hour)
+  #            end
+  #msg << "　約 #{required_time} 分(#{'%2.1f' % (required_time / 60.0)} 時間)後"
+  #next_time = now + (required_time - 1).minutes + (60 - sot.min).seconds
+  #msg << "　日本時間(JST): #{(next_time).in_time_zone('Asia/Tokyo')}"
+  #msg << "　ロンドン(BST): #{next_time.in_time_zone('London')}"
+  #msg << "　アメリカ太平洋(PDT/PST): #{next_time.in_time_zone('America/Los_Angeles')}"
+  #msg << "　アメリカ東部(EDT/EST): #{next_time.in_time_zone('America/New_York')}"
+  #msg << sea(sot_time(next_time))
 
   msg.join('<BR>')
 end

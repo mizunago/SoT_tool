@@ -1,4 +1,4 @@
-#!/home/nagonago/.rbenv/versions/2.2.5/bin/ruby
+#!/home/ubuntu/.rbenv/versions/2.7.5/bin/ruby
 
 APP_HOME = '/home/www/default/html/cgi/sot'.freeze
 load "#{APP_HOME}/app.rb"
